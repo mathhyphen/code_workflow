@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "agentbridge": {
+      "command": "node",
+      "args": [
+        "D:/apps/code_workflow/agentbridge/src/mcp-stdio.js"
+      ],
+      "env": {
+        "AGENTBRIDGE_URL": "http://127.0.0.1:8765/rpc",
+        "AGENTBRIDGE_DEFAULT_WAIT_SECONDS": "30"
+      }
+    }
+  }
+}

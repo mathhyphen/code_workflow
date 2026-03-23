@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Codex Remote Control Plane</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-high": "#e1e9ee",
+              "primary-container": "#d9e3f9",
+              "secondary-fixed-dim": "#c6d5ee",
+              "secondary": "#516075",
+              "on-secondary-fixed": "#324054",
+              "primary-dim": "#495365",
+              "on-background": "#2a3439",
+              "on-tertiary-fixed-variant": "#535e71",
+              "tertiary": "#546073",
+              "secondary-fixed": "#d4e4fc",
+              "tertiary-fixed-dim": "#ccd8ef",
+              "surface-container": "#e8eff3",
+              "surface-tint": "#555f71",
+              "surface-container-low": "#f0f4f7",
+              "primary-fixed": "#d9e3f9",
+              "on-primary": "#f6f7ff",
+              "surface-dim": "#cfdce3",
+              "on-primary-container": "#485264",
+              "inverse-on-surface": "#9a9d9f",
+              "error-dim": "#4e0309",
+              "tertiary-dim": "#495467",
+              "outline-variant": "#a9b4b9",
+              "on-primary-fixed-variant": "#525c6e",
+              "tertiary-container": "#dae6fd",
+              "error": "#9f403d",
+              "surface": "#f8f9fb",
+              "on-secondary-container": "#445367",
+              "background": "#f8f9fb",
+              "on-tertiary": "#f8f8ff",
+              "on-secondary-fixed-variant": "#4e5d71",
+              "secondary-container": "#d4e4fc",
+              "on-error-container": "#752121",
+              "outline": "#727c82",
+              "surface-container-highest": "#d9e4ea",
+              "error-container": "#fe8983",
+              "on-tertiary-fixed": "#374254",
+              "inverse-primary": "#dee8ff",
+              "primary": "#555f71",
+              "on-surface-variant": "#566166",
+              "inverse-surface": "#0b0f10",
+              "surface-variant": "#d9e4ea",
+              "on-surface": "#2a3439",
+              "surface-bright": "#f8f9fb",
+              "primary-fixed-dim": "#cbd5eb",
+              "on-primary-fixed": "#364051",
+              "tertiary-fixed": "#dae6fd",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary": "#f7f9ff",
+              "secondary-dim": "#455468",
+              "on-error": "#fff7f6",
+              "on-tertiary-container": "#495467"
+            },
+            fontFamily: {
+              headline: ["Inter"],
+              body: ["Inter"],
+              label: ["Inter"]
+            },
+            borderRadius: {
+              DEFAULT: "0.125rem",
+              lg: "0.25rem",
+              xl: "0.5rem",
+              full: "0.75rem"
+            }
+          }
+        }
+      };
+    </script>
+    <link href="/styles.css" rel="stylesheet" />
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 20;
+        font-size: 20px;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5eb;
+        border-radius: 10px;
+      }
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+      }
+    </style>
+  </head>
+  <body class="app-shell bg-surface text-on-surface h-screen overflow-hidden flex font-body selection:bg-primary-container">
+    <nav class="app-rail fixed left-0 top-0 h-full z-50 w-[64px] flex flex-col items-center py-4 bg-slate-100 text-[0.875rem] tracking-tight">
+      <div class="mb-8">
+        <span class="material-symbols-outlined text-primary text-2xl">terminal</span>
+      </div>
+      <div class="flex flex-col gap-4 flex-1">
+        <button class="w-10 h-10 flex items-center justify-center text-slate-900 bg-white/50 rounded-md transition-all duration-150 scale-95 active:scale-90" title="New Thread" type="button">
+          <span class="material-symbols-outlined">add_box</span>
+        </button>
+        <button class="w-10 h-10 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors" title="Automations" type="button">
+          <span class="material-symbols-outlined">smart_toy</span>
+        </button>
+        <button class="w-10 h-10 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors" title="Skills" type="button">
+          <span class="material-symbols-outlined">extension</span>
+        </button>
+      </div>
+      <div class="mt-auto">
+        <button class="w-10 h-10 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors" title="Settings" type="button">
+          <span class="material-symbols-outlined">settings</span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="flex flex-1 ml-[64px] overflow-hidden">
+      <aside class="workspace-sidebar w-72 bg-surface-container-low border-r border-outline-variant/15 flex flex-col overflow-y-auto">
+        <div class="p-4 border-b border-outline-variant/15 bg-surface-container-lowest">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Status Summary</h2>
+            <button class="text-[0.75rem] text-primary font-medium" id="refresh-all" type="button">Refresh</button>
+          </div>
+          <div class="bg-surface p-3 rounded-md border border-outline-variant/10 space-y-3">
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-[0.8125rem] font-medium text-on-surface">Control Plane</span>
+                <span class="text-[0.6875rem] font-semibold px-1.5 py-0.5 rounded-full uppercase tracking-tighter bg-tertiary-container text-tertiary" id="status-pill">Idle</span>
+              </div>
+              <div class="text-[0.875rem] font-semibold text-on-surface" id="metric-status">Unknown</div>
+              <div class="text-[0.75rem] text-on-surface-variant" id="metric-endpoint">Waiting for refresh</div>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="bg-surface-container-lowest border border-outline-variant/10 rounded-md p-2.5">
+                <div class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Targets</div>
+                <div class="text-[1rem] font-bold text-primary mt-1" id="metric-targets">0</div>
+              </div>
+              <div class="bg-surface-container-lowest border border-outline-variant/10 rounded-md p-2.5">
+                <div class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Sessions</div>
+                <div class="text-[1rem] font-bold text-primary mt-1" id="metric-sessions">0</div>
+              </div>
+              <div class="bg-surface-container-lowest border border-outline-variant/10 rounded-md p-2.5">
+                <div class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Tunnels</div>
+                <div class="text-[1rem] font-bold text-primary mt-1" id="metric-tunnels">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Targets</h2>
+            <div class="flex items-center gap-2">
+              <button class="text-[0.75rem] text-primary font-medium" id="new-target" type="button">New</button>
+              <span class="material-symbols-outlined text-xs text-on-surface-variant">filter_list</span>
+            </div>
+          </div>
+          <div class="space-y-2 list-stack" id="target-list"></div>
+
+          <div class="mt-8">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Recent Sessions</h2>
+              <button class="text-[0.75rem] text-primary font-medium" id="refresh-sessions" type="button">Refresh</button>
+            </div>
+            <div class="space-y-2 list-stack" id="session-list"></div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="thread-pane flex-1 flex flex-col min-w-0 bg-surface">
+        <header class="app-topbar h-12 w-full flex items-center justify-between px-6 bg-white border-b border-slate-200 font-inter text-sm font-medium">
+          <div class="flex items-center gap-4">
+            <span class="font-bold text-slate-900 tracking-tight">Codex Remote Control</span>
+            <nav class="flex gap-6 ml-4">
+              <a class="text-slate-900 border-b-2 border-slate-700 pb-3 h-12 flex items-center" href="#">Threads</a>
+              <a class="text-slate-500 hover:text-slate-800 transition-all duration-150 pb-3 h-12 flex items-center" href="#">Assets</a>
+              <a class="text-slate-500 hover:text-slate-800 transition-all duration-150 pb-3 h-12 flex items-center" href="#">Logs</a>
+            </nav>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="relative hidden lg:block">
+              <span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+              <input class="bg-surface-container-low border-none rounded-md pl-8 pr-4 py-1 text-[0.8125rem] w-64 focus:ring-1 focus:ring-primary" placeholder="Global Search..." type="text" />
+            </div>
+            <span class="material-symbols-outlined text-slate-500 cursor-pointer">notifications</span>
+            <span class="material-symbols-outlined text-slate-500 cursor-pointer">help_outline</span>
+          </div>
+        </header>
+
+        <div class="thread-workspace flex-1 overflow-y-auto p-6 space-y-6">
+          <div class="thread-header">
+            <nav class="flex items-center gap-2 text-[0.75rem] text-on-surface-variant mb-1">
+              <span>Workspace</span>
+              <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+              <span class="font-medium" id="detail-breadcrumb">Main Thread</span>
+            </nav>
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h1 class="text-[1.5rem] font-bold text-on-surface tracking-tight" id="detail-title">Compose or Inspect</h1>
+                <div class="text-[0.8125rem] text-on-surface-variant mt-1" id="detail-meta">
+                  <span>No thread selected.</span>
+                </div>
+              </div>
+              <button class="text-[0.75rem] text-primary font-medium" id="refresh-thread" type="button">Refresh Thread</button>
+            </div>
+          </div>
+          <div class="thread-status-banner hidden" id="thread-status-banner"></div>
+
+          <div class="space-y-4">
+            <div class="thread-card bg-surface-container-lowest border border-outline-variant/15 p-4 rounded-md shadow-sm">
+              <div class="flex items-center gap-2 mb-4 text-on-surface">
+                <span class="material-symbols-outlined text-secondary text-[18px]">smart_toy</span>
+                <div>
+                  <div class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Assistant Output</div>
+                  <div class="text-[0.875rem] font-semibold">Latest Response</div>
+                </div>
+              </div>
+              <div class="output-pane bg-surface-container-lowest border border-outline-variant/15 p-4 rounded-md shadow-sm text-[0.875rem] leading-relaxed" id="assistant-output">Run a thread to see the final assistant message here.</div>
+            </div>
+
+            <div class="thread-card bg-surface-container-lowest border border-outline-variant/15 p-4 rounded-md shadow-sm">
+              <div class="flex items-center gap-2 mb-4 text-on-surface">
+                <span class="material-symbols-outlined text-secondary text-[18px]">history</span>
+                <div>
+                  <div class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Thread History</div>
+                  <div class="text-[0.875rem] font-semibold">Turns</div>
+                </div>
+              </div>
+              <div class="timeline bg-surface-container-lowest border border-outline-variant/15 p-4 rounded-md shadow-sm" id="thread-turns">Thread history will appear here.</div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <aside class="inspector-pane w-80 bg-surface-container border-l border-outline-variant/15 flex flex-col overflow-y-auto">
+        <div class="p-4 border-b border-outline-variant/15">
+          <div class="flex items-center gap-2 mb-4 text-on-surface">
+            <span class="material-symbols-outlined">edit_note</span>
+            <h3 class="font-bold text-[0.875rem] tracking-tight">Target Editor</h3>
+          </div>
+          <div class="hidden mb-3 rounded-md border px-3 py-2 text-[0.75rem]" id="panel-message"></div>
+          <form class="space-y-3" id="target-form">
+            <input id="target-id" type="hidden" />
+            <div class="space-y-1">
+              <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Label</label>
+              <input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="target-label" placeholder="Local Test Target" type="text" />
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Target ID</label>
+                <input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="target-id-input" placeholder="LTT-01" type="text" />
+              </div>
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Model</label>
+                <input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="target-model" placeholder="gpt-5.4" type="text" />
+              </div>
+            </div>
+            <div class="space-y-1">
+              <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">WebSocket URL</label>
+              <input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] font-mono focus:ring-1 focus:ring-primary" id="target-url" placeholder="ws://127.0.0.1:4500" type="text" />
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Approval Policy</label>
+                <input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="target-approval" placeholder="never" type="text" />
+              </div>
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Sandbox</label>
+                <input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="target-sandbox" placeholder="workspace-write" type="text" />
+              </div>
+            </div>
+            <div class="space-y-1">
+              <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Default CWD</label>
+              <input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] font-mono focus:ring-1 focus:ring-primary" id="target-cwd" placeholder="/var/www/html" type="text" />
+            </div>
+            <div class="space-y-1">
+              <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Notes</label>
+              <textarea class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="target-notes" placeholder="Memory context or operator notes..." rows="3"></textarea>
+            </div>
+            <div class="rounded-md border border-outline-variant/20 bg-surface-container-lowest p-3 space-y-3" id="ssh-fields">
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <div class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">SSH Tunnel</div>
+                  <div class="text-[0.75rem] text-on-surface-variant">Let this control plane create the local SSH forward automatically.</div>
+                </div>
+                <label class="inline-flex items-center gap-2 text-[0.8125rem] text-on-surface">
+                  <input class="rounded border-outline-variant/40 text-primary focus:ring-primary" id="target-ssh-enabled" type="checkbox" />
+                  Enable
+                </label>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="space-y-1">
+                  <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">SSH Host</label>
+                  <input class="w-full bg-white border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="target-ssh-host" placeholder="server-a.example.com" type="text" />
+                </div>
+                <div class="space-y-1">
+                  <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">SSH User</label>
+                  <input class="w-full bg-white border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="target-ssh-user" placeholder="ubuntu" type="text" />
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="space-y-1">
+                  <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">SSH Port</label>
+                  <input class="w-full bg-white border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="target-ssh-port" placeholder="22" type="text" />
+                </div>
+                <div class="space-y-1">
+                  <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Local Forward Port</label>
+                  <input class="w-full bg-white border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="target-ssh-local-port" placeholder="Auto" type="text" />
+                </div>
+              </div>
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Identity File</label>
+                <input class="w-full bg-white border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] font-mono focus:ring-1 focus:ring-primary" id="target-ssh-identity-file" placeholder="C:\Users\you\.ssh\id_ed25519" type="text" />
+              </div>
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Shell Setup</label>
+                <textarea class="w-full bg-white border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] font-mono focus:ring-1 focus:ring-primary" id="target-ssh-shell-setup" placeholder="export PATH=$HOME/.nvm/versions/node/v22.20.0/bin:$PATH" rows="2"></textarea>
+              </div>
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Codex Command</label>
+                <input class="w-full bg-white border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] font-mono focus:ring-1 focus:ring-primary" id="target-ssh-codex-command" placeholder="codex" type="text" />
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="flex-1 bg-primary py-2 text-on-primary text-[0.8125rem] font-bold rounded-md flex items-center justify-center gap-2 hover:bg-primary-dim transition-colors shadow-sm active:translate-y-0.5" type="submit">
+                <span class="material-symbols-outlined text-sm">save</span>
+                Save Target
+              </button>
+              <button class="px-3 py-2 text-[0.8125rem] font-medium rounded-md border border-outline-variant/30 bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors" id="clear-target" type="button">Clear</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="p-4 border-b border-outline-variant/15">
+          <div class="flex items-center gap-2 mb-4 text-on-surface">
+            <span class="material-symbols-outlined">badge</span>
+            <h3 class="font-bold text-[0.875rem] tracking-tight">Remote Auth</h3>
+          </div>
+          <div class="space-y-3">
+            <div class="text-[0.75rem] text-on-surface-variant" id="auth-target-label">Select a target with SSH enabled to manage remote login.</div>
+            <div class="grid grid-cols-2 gap-2">
+              <button class="px-3 py-2 text-[0.8125rem] font-medium rounded-md border border-outline-variant/30 bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors" id="auth-status" type="button">Auth Status</button>
+              <button class="px-3 py-2 text-[0.8125rem] font-medium rounded-md border border-outline-variant/30 bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors" id="auth-logout" type="button">Logout</button>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <button class="bg-primary py-2 text-on-primary text-[0.8125rem] font-bold rounded-md flex items-center justify-center gap-2 hover:bg-primary-dim transition-colors shadow-sm active:translate-y-0.5" id="auth-device-start" type="button">
+                <span class="material-symbols-outlined text-sm">login</span>
+                Start Device Login
+              </button>
+              <button class="px-3 py-2 text-[0.8125rem] font-medium rounded-md border border-outline-variant/30 bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors" id="auth-device-cancel" type="button">Cancel Login</button>
+            </div>
+            <pre class="auth-log bg-surface-container-lowest border border-outline-variant/15 rounded-md p-3 text-[0.75rem] whitespace-pre-wrap overflow-auto" id="auth-output">Remote auth output will appear here.</pre>
+          </div>
+        </div>
+
+        <div class="p-4 border-b border-outline-variant/15">
+          <div class="flex items-center gap-2 mb-4 text-on-surface">
+            <span class="material-symbols-outlined">key</span>
+            <h3 class="font-bold text-[0.875rem] tracking-tight">Auth Profiles</h3>
+          </div>
+          <div class="space-y-3">
+            <div class="text-[0.75rem] text-on-surface-variant">Store multiple account profiles locally, then apply one profile to many SSH targets at once.</div>
+            <div class="space-y-2 list-stack" id="auth-profile-list"></div>
+            <form class="space-y-3" id="auth-profile-form">
+              <input id="auth-profile-id" type="hidden" />
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Profile Label</label>
+                <input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="auth-profile-label" placeholder="Work Account A" type="text" />
+              </div>
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">API Key</label>
+                <input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] font-mono focus:ring-1 focus:ring-primary" id="auth-profile-api-key" placeholder="sk-..." type="password" />
+                <div class="text-[0.75rem] text-on-surface-variant" id="auth-profile-api-key-hint">The key is stored in the local control-plane state file for batch apply.</div>
+              </div>
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Notes</label>
+                <textarea class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="auth-profile-notes" placeholder="Optional notes about account usage or scope..." rows="2"></textarea>
+              </div>
+              <button class="w-full px-3 py-2 text-[0.8125rem] font-medium rounded-md border border-outline-variant/30 bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors" id="auth-profile-import-local" type="button">Import Current Local Codex Login</button>
+              <div class="grid grid-cols-3 gap-2">
+                <button class="bg-primary py-2 text-on-primary text-[0.8125rem] font-bold rounded-md flex items-center justify-center gap-2 hover:bg-primary-dim transition-colors shadow-sm active:translate-y-0.5" id="auth-profile-save" type="submit">
+                  <span class="material-symbols-outlined text-sm">save</span>
+                  Save
+                </button>
+                <button class="px-3 py-2 text-[0.8125rem] font-medium rounded-md border border-outline-variant/30 bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors" id="auth-profile-clear" type="button">Clear</button>
+                <button class="px-3 py-2 text-[0.8125rem] font-medium rounded-md border border-outline-variant/30 bg-surface-container-lowest text-error hover:bg-error/5 transition-colors" id="auth-profile-remove" type="button">Remove</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="p-4 border-b border-outline-variant/15">
+          <div class="flex items-center gap-2 mb-4 text-on-surface">
+            <span class="material-symbols-outlined">switch_account</span>
+            <h3 class="font-bold text-[0.875rem] tracking-tight">Batch Apply</h3>
+          </div>
+          <div class="space-y-3">
+            <div class="space-y-1">
+              <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Auth Profile</label>
+              <select class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="auth-batch-profile"></select>
+            </div>
+            <div class="flex items-center justify-between gap-3">
+              <div class="text-[0.75rem] text-on-surface-variant" id="auth-batch-summary">Select one or more SSH targets for batch login.</div>
+              <button class="text-[0.75rem] text-primary font-medium" id="auth-batch-select-all" type="button">Select All</button>
+            </div>
+            <div class="space-y-2 list-stack" id="auth-batch-target-list"></div>
+            <button class="bg-primary py-2 text-on-primary text-[0.8125rem] font-bold rounded-md flex items-center justify-center gap-2 hover:bg-primary-dim transition-colors shadow-sm active:translate-y-0.5" id="auth-batch-apply" type="button">
+              <span class="material-symbols-outlined text-sm">send</span>
+              Apply Profile To Selected Targets
+            </button>
+            <pre class="auth-log bg-surface-container-lowest border border-outline-variant/15 rounded-md p-3 text-[0.75rem] whitespace-pre-wrap overflow-auto" id="auth-batch-output">Batch apply results will appear here.</pre>
+          </div>
+        </div>
+
+        <div class="p-4 border-b border-outline-variant/15">
+          <div class="flex items-center gap-2 mb-4 text-on-surface">
+            <span class="material-symbols-outlined">bolt</span>
+            <h3 class="font-bold text-[0.875rem] tracking-tight">Compose/Run Remote Turn</h3>
+          </div>
+          <form class="space-y-3" id="compose-form">
+            <div class="grid grid-cols-2 gap-2">
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Target</label>
+                <select class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="compose-target"></select>
+              </div>
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Thread ID</label>
+                <input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] font-mono focus:ring-1 focus:ring-primary" id="compose-thread-id" placeholder="Continue existing thread" type="text" />
+              </div>
+            </div>
+            <div class="space-y-1">
+              <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Prompt</label>
+              <textarea class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="compose-prompt" placeholder="Enter remote instruction..." rows="4"></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">CWD Override</label>
+                <input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] font-mono focus:ring-1 focus:ring-primary" id="compose-cwd" placeholder="/var/www/html" type="text" />
+              </div>
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Model Override</label>
+                <input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="compose-model" placeholder="gpt-5.4" type="text" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Approval Policy</label>
+                <input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="compose-approval" placeholder="never" type="text" />
+              </div>
+              <div class="space-y-1">
+                <label class="text-[0.6875rem] font-semibold text-on-surface-variant uppercase tracking-wider">Sandbox</label>
+                <input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-2 py-1.5 text-[0.8125rem] focus:ring-1 focus:ring-primary" id="compose-sandbox" placeholder="workspace-write" type="text" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <button class="bg-primary py-2 text-on-primary text-[0.8125rem] font-bold rounded-md flex items-center justify-center gap-2 hover:bg-primary-dim transition-colors shadow-sm active:translate-y-0.5" type="submit">
+                <span class="material-symbols-outlined text-sm">play_arrow</span>
+                Execute Turn
+              </button>
+              <button class="px-3 py-2 text-[0.8125rem] font-medium rounded-md border border-outline-variant/30 bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors" id="load-remote-threads" type="button">Browse Threads</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="p-4">
+          <div class="flex items-center gap-2 mb-4 text-on-surface">
+            <span class="material-symbols-outlined">account_tree</span>
+            <h3 class="font-bold text-[0.875rem] tracking-tight">Remote Thread Index</h3>
+          </div>
+          <div class="space-y-2 list-stack" id="remote-thread-list"></div>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="fixed bottom-0 left-[64px] right-0 h-6 bg-surface-dim border-t border-outline-variant/15 px-4 flex items-center justify-between text-[0.6875rem] text-on-surface-variant font-medium z-40">
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-1">
+          <div class="w-1.5 h-1.5 rounded-full bg-tertiary"></div>
+          <span>CONNECTED: CONTROL PLANE</span>
+        </div>
+        <span>LOCAL RPC</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span>REMOTE APP SERVER OPERATOR UI</span>
+        <span>v0.1</span>
+      </div>
+    </footer>
+
+    <template id="target-card-template">
+      <article class="list-card p-3 bg-surface-container-lowest rounded-md hover:bg-surface-container transition-colors cursor-pointer group border border-outline-variant/10">
+        <div class="flex justify-between items-start mb-1 list-card-top">
+          <div>
+            <h3 class="card-title text-[0.875rem] font-medium text-on-surface"></h3>
+            <p class="card-subtitle text-[0.75rem] text-on-surface-variant"></p>
+          </div>
+          <span class="badge bg-surface-variant text-on-surface-variant text-[0.6875rem] font-semibold px-1.5 py-0.5 rounded-full uppercase tracking-tighter"></span>
+        </div>
+        <dl class="meta-grid text-[0.75rem] mt-2"></dl>
+        <div class="card-actions mt-3 flex flex-wrap gap-2">
+          <button class="px-2.5 py-1.5 text-[0.75rem] rounded-md border border-outline-variant/30 bg-surface-container-lowest hover:bg-surface-container-low transition-colors" data-action="edit" type="button">Edit</button>
+          <button class="px-2.5 py-1.5 text-[0.75rem] rounded-md border border-outline-variant/30 bg-surface-container-lowest hover:bg-surface-container-low transition-colors" data-action="connect" type="button">Connect</button>
+          <button class="px-2.5 py-1.5 text-[0.75rem] rounded-md border border-outline-variant/30 bg-surface-container-lowest hover:bg-surface-container-low transition-colors" data-action="disconnect" type="button">Disconnect</button>
+          <button class="px-2.5 py-1.5 text-[0.75rem] rounded-md border border-outline-variant/30 bg-surface-container-lowest hover:bg-surface-container-low transition-colors" data-action="probe" type="button">Probe</button>
+          <button class="px-2.5 py-1.5 text-[0.75rem] rounded-md border border-outline-variant/30 bg-surface-container-lowest hover:bg-surface-container-low transition-colors" data-action="compose" type="button">Use</button>
+          <button class="px-2.5 py-1.5 text-[0.75rem] rounded-md border border-outline-variant/30 bg-surface-container-lowest text-error hover:bg-error/5 transition-colors" data-action="remove" type="button">Remove</button>
+        </div>
+      </article>
+    </template>
+
+    <template id="session-card-template">
+      <article class="list-card p-3 bg-surface-container-lowest rounded-md hover:bg-surface-container transition-colors cursor-pointer group border border-outline-variant/10">
+        <div class="flex justify-between items-start mb-1 list-card-top">
+          <div>
+            <h3 class="card-title text-[0.875rem] font-medium text-on-surface"></h3>
+            <p class="card-subtitle text-[0.75rem] text-on-surface-variant"></p>
+          </div>
+          <span class="badge bg-surface-variant text-on-surface-variant text-[0.6875rem] font-semibold px-1.5 py-0.5 rounded-full uppercase tracking-tighter"></span>
+        </div>
+        <p class="session-preview text-[0.75rem] text-on-surface mt-2 line-clamp-2"></p>
+        <dl class="meta-grid text-[0.75rem] mt-2"></dl>
+        <div class="card-actions mt-3 flex flex-wrap gap-2">
+          <button class="px-2.5 py-1.5 text-[0.75rem] rounded-md border border-outline-variant/30 bg-surface-container-lowest hover:bg-surface-container-low transition-colors" data-action="open" type="button">Open</button>
+          <button class="px-2.5 py-1.5 text-[0.75rem] rounded-md border border-outline-variant/30 bg-surface-container-lowest hover:bg-surface-container-low transition-colors" data-action="continue" type="button">Continue</button>
+        </div>
+      </article>
+    </template>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

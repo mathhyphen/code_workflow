@@ -1,0 +1,16 @@
+{
+  "id": "srv-a-proj1",
+  "label": "Server A / proj1",
+  "url": "ws://127.0.0.1:4500",
+  "defaultCwd": "/srv/projects/proj1",
+  "defaultModel": "gpt-5.4",
+  "defaultApprovalPolicy": "never",
+  "defaultSandbox": "workspace-write",
+  "sshEnabled": true,
+  "sshHost": "server-a.example.com",
+  "sshPort": "22",
+  "sshUser": "ubuntu",
+  "sshLocalPort": "4501",
+  "sshIdentityFile": "C:\\Users\\you\\.ssh\\id_ed25519",
+  "notes": "Let the control plane open the SSH local-forward automatically."
+}

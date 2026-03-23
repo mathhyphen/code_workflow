@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Claude Bridge"
+  short_description: "Run a local Codex planner and Claude Code worker loop"
+  default_prompt: "Use $codex-claude-bridge to set up or extend a local AgentBridge workflow between Codex and Claude Code."

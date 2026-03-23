@@ -1,0 +1,25 @@
+{
+  "title": "Train baseline model",
+  "description": "Implement or update the baseline training script, run the baseline experiment, monitor the run, execute the relevant checks, and summarize what happened for the planner.",
+  "repoPath": "D:/apps/my_experiment_project",
+  "acceptanceCriteria": [
+    "The requested code changes are implemented",
+    "The training command starts or completes as requested",
+    "Key metrics, artifacts, and blockers are summarized for Codex",
+    "The standard memory files and execution report are updated"
+  ],
+  "commands": [
+    "python train.py --config configs/baseline.yaml",
+    "python evaluate.py --checkpoint outputs/baseline/latest.ckpt"
+  ],
+  "labels": [
+    "experiment",
+    "baseline"
+  ],
+  "metadata": {
+    "skillFiles": [
+      "D:/my-skills/experiment-rules.md"
+    ],
+    "skillPrompt": "Follow the experiment rules strictly. Preserve the existing training pipeline patterns."
+  }
+}

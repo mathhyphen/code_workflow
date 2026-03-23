@@ -1,0 +1,33 @@
+{
+  "name": "agentbridge",
+  "version": "0.1.0",
+  "description": "Local MCP + JSON-RPC harness for Codex and Claude Code task handoffs.",
+  "main": "src/index.js",
+  "bin": {
+    "code-workflow": "src/cli.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "cli": "node src/cli.js",
+    "mcp": "node src/mcp-stdio.js",
+    "stack": "node scripts/start-stack.js",
+    "delegate": "node scripts/delegate-task.js",
+    "init-loop": "node scripts/init-project-loop.js",
+    "smoke": "node scripts/smoke-test.js",
+    "rpc": "node scripts/rpc-call.js"
+  },
+  "keywords": [
+    "agentbridge",
+    "mcp",
+    "json-rpc",
+    "claude-code",
+    "codex"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.27.1",
+    "zod": "4.3.6"
+  }
+}

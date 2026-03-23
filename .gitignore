@@ -1,0 +1,9 @@
+agentbridge/node_modules/
+agentbridge/data/
+remote-control-plane/node_modules/
+remote-control-plane/data/
+remote-control-plane/tmp/
+tmp/
+.playwright-cli/
+output/
+*.log

@@ -1,0 +1,241 @@
+body {
+  padding-bottom: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(217, 227, 249, 0.78), transparent 28%),
+    linear-gradient(180deg, #edf3f8 0%, #f7f8fa 52%, #f5f6f8 100%);
+}
+
+.app-shell {
+  color: #24313a;
+}
+
+.app-rail {
+  background: linear-gradient(180deg, rgba(238, 243, 248, 0.96), rgba(231, 238, 245, 0.92));
+  border-right: 1px solid rgba(169, 180, 185, 0.22);
+}
+
+.workspace-sidebar {
+  background: rgba(242, 246, 249, 0.92);
+  backdrop-filter: blur(18px);
+}
+
+.thread-pane {
+  background: transparent;
+}
+
+.thread-workspace {
+  background: rgba(252, 252, 253, 0.72);
+}
+
+.app-topbar {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(18px);
+}
+
+.inspector-pane {
+  background: rgba(245, 247, 250, 0.95);
+}
+
+.list-stack {
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.list-card,
+.thread-card {
+  border-radius: 0.85rem;
+  border-color: rgba(169, 180, 185, 0.16);
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 10px 30px rgba(83, 94, 113, 0.05);
+}
+
+.list-card.is-selected {
+  border-color: rgba(85, 95, 113, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(85, 95, 113, 0.12), 0 10px 24px rgba(83, 94, 113, 0.08);
+  background: rgba(229, 235, 243, 0.86);
+}
+
+.list-card.is-selected .card-title {
+  color: #364051;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.2rem 0.5rem;
+}
+
+.meta-grid dt {
+  color: #566166;
+  font-weight: 600;
+  text-transform: lowercase;
+}
+
+.meta-grid dd {
+  margin: 0;
+  color: #2a3439;
+  word-break: break-word;
+}
+
+.output-pane,
+.timeline,
+.empty {
+  min-height: 120px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.timeline {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.timeline-turn {
+  padding: 0.9rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(169, 180, 185, 0.18);
+  background: rgba(246, 248, 251, 0.92);
+}
+
+.timeline-item {
+  margin-top: 0.65rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(169, 180, 185, 0.16);
+  background: #ffffff;
+}
+
+.timeline-item-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #566166;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.35rem;
+}
+
+.inline-note {
+  margin: 0;
+  color: #566166;
+  font-size: 0.75rem;
+}
+
+.toast {
+  position: fixed;
+  right: 1rem;
+  bottom: 2rem;
+  max-width: 360px;
+  padding: 0.95rem 1rem;
+  border-radius: 0.5rem;
+  background: rgba(11, 15, 16, 0.96);
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+  z-index: 80;
+}
+
+.auth-log {
+  min-height: 112px;
+  max-height: 220px;
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.profile-row,
+.batch-target-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(169, 180, 185, 0.18);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.profile-row.is-selected,
+.batch-target-row.is-selected {
+  border-color: rgba(85, 95, 113, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(85, 95, 113, 0.12);
+  background: rgba(217, 227, 249, 0.28);
+}
+
+.profile-row-main,
+.batch-target-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.masked-secret {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.75rem;
+  color: #566166;
+}
+
+.compact-note {
+  font-size: 0.75rem;
+  color: #566166;
+}
+
+.thread-status-banner {
+  border-radius: 0.85rem;
+  border: 1px solid rgba(169, 180, 185, 0.16);
+  padding: 0.85rem 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 24px rgba(83, 94, 113, 0.06);
+}
+
+.thread-status-banner.running {
+  border-color: rgba(85, 95, 113, 0.2);
+  background: rgba(234, 239, 246, 0.94);
+  color: #364051;
+}
+
+.thread-status-banner.completed {
+  border-color: rgba(96, 153, 109, 0.2);
+  background: rgba(237, 247, 240, 0.95);
+  color: #255234;
+}
+
+.thread-status-banner.error {
+  border-color: rgba(159, 64, 61, 0.22);
+  background: rgba(255, 244, 243, 0.96);
+  color: #8d302d;
+}
+
+.thread-header h1 {
+  letter-spacing: -0.03em;
+}
+
+.thread-pane .text-on-surface-variant,
+.workspace-sidebar .text-on-surface-variant,
+.inspector-pane .text-on-surface-variant {
+  color: #66727d !important;
+}
+
+.thread-pane input,
+.thread-pane textarea,
+.thread-pane select,
+.inspector-pane input,
+.inspector-pane textarea,
+.inspector-pane select {
+  border-radius: 0.75rem;
+}
+
+.workspace-sidebar .list-card,
+.inspector-pane .profile-row,
+.inspector-pane .batch-target-row {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.app-topbar a {
+  border-bottom-color: transparent;
+}
+
+.app-topbar a:first-child {
+  border-bottom-color: #444f61;
+}
+
+.status-pill.busy {
+  background: #d9e3f9 !important;
+  color: #485264 !important;
+}
