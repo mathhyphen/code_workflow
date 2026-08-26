@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" font-family="'Segoe UI', 'Microsoft YaHei', system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="codex" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="bridge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="claude" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f59e0b"/>
+      <stop offset="1" stop-color="#d97706"/>
+    </linearGradient>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <rect width="900" height="520" rx="18" fill="url(#bg)"/>
+  <text x="450" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#e2e8f0">code_workflow 研究-执行闭环</text>
+  <text x="450" y="64" text-anchor="middle" font-size="13" fill="#94a3b8">Codex 规划 → AgentBridge 调度 → Claude Code 执行 → 报告回读</text>
+
+  <!-- Codex planner -->
+  <rect x="40" y="110" width="230" height="110" rx="12" fill="url(#codex)"/>
+  <text x="155" y="142" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">Codex</text>
+  <text x="155" y="166" text-anchor="middle" font-size="11.5" fill="#ede9fe">Planner · 研究者</text>
+  <text x="155" y="186" text-anchor="middle" font-size="11" fill="#ddd6fe">研究问题 / 审阅结果</text>
+  <text x="155" y="204" text-anchor="middle" font-size="11" fill="#ddd6fe">撰写下一轮研究计划</text>
+
+  <!-- AgentBridge daemon -->
+  <rect x="335" y="100" width="230" height="130" rx="12" fill="url(#bridge)"/>
+  <text x="450" y="134" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">AgentBridge</text>
+  <text x="450" y="156" text-anchor="middle" font-size="11.5" fill="#dbeafe">Daemon + CLI + MCP</text>
+  <text x="450" y="178" text-anchor="middle" font-size="11" fill="#bfdbfe">任务队列 · 仓库记忆</text>
+  <text x="450" y="196" text-anchor="middle" font-size="11" fill="#bfdbfe">JSON-RPC 调度 · 状态管理</text>
+  <text x="450" y="214" text-anchor="middle" font-size="11" fill="#bfdbfe">skill 感知委派</text>
+
+  <!-- Claude Code executor -->
+  <rect x="630" y="110" width="230" height="110" rx="12" fill="url(#claude)"/>
+  <text x="745" y="142" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">Claude Code</text>
+  <text x="745" y="166" text-anchor="middle" font-size="11.5" fill="#fef3c7">Executor · 工程师</text>
+  <text x="745" y="186" text-anchor="middle" font-size="11" fill="#fde68a">写代码 / 跑实验</text>
+  <text x="745" y="204" text-anchor="middle" font-size="11" fill="#fde68a">测试 / 出执行报告</text>
+
+  <!-- top arrows: Codex -> Bridge -> Claude -->
+  <line x1="270" y1="155" x2="325" y2="160" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arr)"/>
+  <line x1="565" y1="160" x2="620" y2="155" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arr)"/>
+  <text x="300" y="148" text-anchor="middle" font-size="10.5" fill="#94a3b8">委派任务</text>
+  <text x="590" y="148" text-anchor="middle" font-size="10.5" fill="#94a3b8">执行 + 报告</text>
+
+  <!-- project repo box -->
+  <rect x="335" y="280" width="230" height="90" rx="12" fill="#1e293b" stroke="#334155"/>
+  <text x="450" y="310" text-anchor="middle" font-size="13.5" font-weight="600" fill="#e2e8f0">目标仓库</text>
+  <text x="450" y="332" text-anchor="middle" font-size="11" fill="#94a3b8">.agentbridge/ 记忆文件</text>
+  <text x="450" y="350" text-anchor="middle" font-size="11" fill="#94a3b8">reports/execution/ 报告</text>
+
+  <!-- loop arrows down/up -->
+  <line x1="450" y1="230" x2="450" y2="270" stroke="#60a5fa" stroke-width="2.5" marker-end="url(#arr)"/>
+  <text x="462" y="255" font-size="10.5" fill="#93c5fd">读写记忆</text>
+
+  <!-- loop back: Claude/report -> Codex (bottom arc) -->
+  <path d="M745 220 C745 430, 155 430, 155 225" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-dasharray="7,5" marker-end="url(#arr)"/>
+  <text x="450" y="430" text-anchor="middle" font-size="11.5" fill="#c4b5fd">Codex 读取执行报告 → 规划下一轮</text>
+
+  <!-- remote control plane note -->
+  <rect x="40" y="430" width="230" height="62" rx="10" fill="#1e293b" stroke="#334155"/>
+  <text x="155" y="454" text-anchor="middle" font-size="12.5" font-weight="600" fill="#e2e8f0">Remote Control Plane</text>
+  <text x="155" y="474" text-anchor="middle" font-size="10.5" fill="#94a3b8">SSH 隧道 · Web 控制台</text>
+</svg>
